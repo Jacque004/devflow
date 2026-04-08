@@ -46,8 +46,10 @@ export function getSupabaseConfigIssues(): string[] {
 
 export const env = readRawEnv()
 
-for (const key of ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY'] as const) {
-  if (!import.meta.env[key]) {
-    console.warn(`[DevFlow] Variable manquante: ${key}`)
+if (import.meta.env.DEV) {
+  for (const key of ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY'] as const) {
+    if (!import.meta.env[key]) {
+      console.warn(`[DevFlow] Variable manquante: ${key}`)
+    }
   }
 }

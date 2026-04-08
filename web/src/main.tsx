@@ -1,13 +1,11 @@
-import { StrictMode } from 'react'
+import { StrictMode, lazy, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { RouterProvider } from 'react-router-dom'
-import { router } from './app/router'
-import { ToastProvider } from './hooks/useToast'
 import { initGlobalErrorHandlers } from './lib/error-reporting'
 import { AppErrorBoundary } from './components/layout/AppErrorBoundary'
-import { AuthSync } from './components/system/AuthSync'
 import { SupabaseConfigGate } from './components/system/SupabaseConfigGate'
+
+const AppShell = lazy(() => import('./AppShell'))
 
 initGlobalErrorHandlers()
 
@@ -15,10 +13,15 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppErrorBoundary>
       <SupabaseConfigGate>
-        <ToastProvider>
-          <AuthSync />
-          <RouterProvider router={router} />
-        </ToastProvider>
+        <Suspense
+          fallback={
+            <div className="min-h-[100dvh] flex items-center justify-center bg-[var(--bg)] text-[var(--muted)]">
+              Chargement…
+            </div>
+          }
+        >
+          <AppShell />
+        </Suspense>
       </SupabaseConfigGate>
     </AppErrorBoundary>
   </StrictMode>,
