@@ -1,5 +1,4 @@
 import { getSupabaseConfigIssues } from './env'
-import { supabase } from './supabase'
 
 type ReportContext = Record<string, unknown>
 
@@ -9,6 +8,10 @@ export async function reportError(error: Error, context?: ReportContext) {
   if (getSupabaseConfigIssues().length > 0) {
     return
   }
+
+  // Import dynamique : ne pas charger @supabase/supabase-js dans le bundle initial
+  // (sinon modulepreload + exécution au démarrage même si la config manque).
+  const { supabase } = await import('./supabase')
 
   const {
     data: { user },
