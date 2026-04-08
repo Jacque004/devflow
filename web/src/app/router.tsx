@@ -43,7 +43,14 @@ function RouteLoader() {
   )
 }
 
-export const router = createBrowserRouter([
+function routerBasename(): string | undefined {
+  const base = import.meta.env.BASE_URL
+  if (base === '/') return undefined
+  return base.replace(/\/$/, '')
+}
+
+export const router = createBrowserRouter(
+  [
   {
     path: '/',
     element: <Navigate to="/dashboard" replace />,
@@ -112,4 +119,6 @@ export const router = createBrowserRouter([
       { path: '/a-propos', element: <Suspense fallback={<RouteLoader />}><AboutPage /></Suspense> },
     ],
   },
-])
+],
+  { basename: routerBasename() },
+)
