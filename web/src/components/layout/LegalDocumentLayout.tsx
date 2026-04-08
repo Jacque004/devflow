@@ -1,11 +1,12 @@
 import { Link, Outlet } from 'react-router-dom'
+import { publicUrl } from '../../lib/publicUrl'
 
 export function LegalDocumentLayout() {
   return (
     <div className="legal-shell">
       <header className="legal-shell-header">
         <Link to="/" className="brand legal-brand">
-          <img src="/logo.png" alt="" className="brand-logo" width={32} height={32} />
+          <img src={publicUrl('/logo.png')} alt="" className="brand-logo" width={32} height={32} />
           <span className="brand-text">DevFlow</span>
         </Link>
         <nav className="legal-shell-nav" aria-label="Acces rapide">

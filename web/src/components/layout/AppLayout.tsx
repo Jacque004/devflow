@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Keyboard } from 'lucide-react'
 import { env, parseSupabaseProjectRef } from '../../lib/env'
+import { publicUrl } from '../../lib/publicUrl'
 import { supabase } from '../../lib/supabase'
 import { useToast } from '../../hooks/useToast'
 import { useEffect, useState } from 'react'
@@ -80,7 +81,7 @@ export function AppLayout() {
         <div className="relative z-[1] px-4 pb-6 pt-5">
           <div className="block max-[900px]:flex max-[900px]:items-center max-[900px]:justify-between">
             <Link to="/dashboard" className="brand mb-[1.35rem] max-[900px]:mb-0">
-              <img src="/logo.png" alt="DevFlow logo" className="brand-logo" />
+              <img src={publicUrl('/logo.png')} alt="DevFlow logo" className="brand-logo" />
               <span className="brand-text">DevFlow</span>
             </Link>
             <button
