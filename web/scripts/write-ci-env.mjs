@@ -14,9 +14,11 @@ const ref = (process.env.VITE_SUPABASE_EXPECTED_REF ?? '').trim()
 
 if (!url || !key) {
   console.error(
-    '::error::Configure le dépôt GitHub : Settings → Secrets and variables → Actions. ' +
-      'Ajoute les secrets (ou variables) nommés exactement VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY ' +
-      '(valeurs = Project URL et clé anon dans Supabase → Project Settings → API). Puis relance le workflow.',
+    '::error::Aucune valeur pour VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY. ' +
+      'Ajoute-les soit comme secrets du dépôt (Settings → Secrets and variables → Actions → Repository secrets), ' +
+      'soit comme secrets de l’environnement « github-pages » (Settings → Environments → github-pages). ' +
+      'Noms exacts : VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY (Supabase → Project Settings → API). ' +
+      'Tu peux aussi utiliser des Variables de dépôt avec les mêmes noms. Puis relance le workflow.',
   )
   process.exit(1)
 }

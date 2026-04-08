@@ -17,6 +17,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Sans cela, les secrets définis uniquement pour l’environnement « github-pages »
+    # (au lieu des secrets du dépôt) ne sont pas visibles dans ce job → VITE_* vides.
+    environment:
+      name: github-pages
     steps:
       - uses: actions/checkout@v4
 
