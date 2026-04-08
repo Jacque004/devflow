@@ -30,13 +30,16 @@ jobs:
         run: npm ci
         working-directory: web
 
-      - name: Build (vite.config.ts applique base /devflow/ si GITHUB_ACTIONS)
+      # Secrets OU variables de dépôt (mêmes noms). Le fichier .env.production est la méthode la plus fiable pour Vite.
+      - name: Générer web/.env.production pour le build
+        working-directory: web
         env:
-          # Repository secrets : Settings → Secrets and variables → Actions
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_APP_ENV: production
-          VITE_SUPABASE_EXPECTED_REF: ${{ secrets.VITE_SUPABASE_EXPECTED_REF }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || vars.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_EXPECTED_REF: ${{ secrets.VITE_SUPABASE_EXPECTED_REF || vars.VITE_SUPABASE_EXPECTED_REF }}
+        run: node ./scripts/write-ci-env.mjs
+
+      - name: Build (base /devflow/ via vite.config si GITHUB_ACTIONS)
         run: |
           npx tsc -b
           npx vite build
