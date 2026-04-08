@@ -20,16 +20,27 @@ function readRawEnv() {
   }
 }
 
+export type SupabaseConfigAudience = 'local' | 'github-pages'
+
 /** Problemes de config qui empechent d utiliser le bon projet Supabase (ou tout projet). */
-export function getSupabaseConfigIssues(): string[] {
+export function getSupabaseConfigIssues(audience: SupabaseConfigAudience = 'local'): string[] {
   const { supabaseUrl, supabaseAnonKey, expectedProjectRef } = readRawEnv()
   const issues: string[] = []
+  const isPages = audience === 'github-pages'
 
   if (!supabaseUrl) {
-    issues.push('VITE_SUPABASE_URL est vide : copie l URL du projet (Settings → API) dans web/.env')
+    issues.push(
+      isPages
+        ? 'VITE_SUPABASE_URL est vide dans ce build : ajoute un secret Actions du meme nom (valeur = Project URL dans Supabase → Settings → API), puis relance le workflow « Deploy GitHub Pages ».'
+        : 'VITE_SUPABASE_URL est vide : copie l URL du projet (Settings → API) dans web/.env',
+    )
   }
   if (!supabaseAnonKey) {
-    issues.push('VITE_SUPABASE_ANON_KEY est vide : copie la cle anon du meme projet dans web/.env')
+    issues.push(
+      isPages
+        ? 'VITE_SUPABASE_ANON_KEY est vide dans ce build : ajoute un secret Actions du meme nom (valeur = cle anon public dans Settings → API), puis relance le deploiement.'
+        : 'VITE_SUPABASE_ANON_KEY est vide : copie la cle anon du meme projet dans web/.env',
+    )
   }
 
   if (supabaseUrl && supabaseAnonKey && expectedProjectRef) {
