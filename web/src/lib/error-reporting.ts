@@ -1,9 +1,14 @@
+import { getSupabaseConfigIssues } from './env'
 import { supabase } from './supabase'
 
 type ReportContext = Record<string, unknown>
 
 export async function reportError(error: Error, context?: ReportContext) {
   console.error('[DevFlow]', error, context)
+
+  if (getSupabaseConfigIssues().length > 0) {
+    return
+  }
 
   const {
     data: { user },

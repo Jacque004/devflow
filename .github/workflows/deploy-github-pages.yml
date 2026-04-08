@@ -31,6 +31,12 @@ jobs:
         working-directory: web
 
       - name: Build (base /devflow/ pour Pages projet)
+        env:
+          # Repository secrets : Settings → Secrets and variables → Actions
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_APP_ENV: production
+          VITE_SUPABASE_EXPECTED_REF: ${{ secrets.VITE_SUPABASE_EXPECTED_REF }}
         run: npm run build -- --base=/devflow/
         working-directory: web
 

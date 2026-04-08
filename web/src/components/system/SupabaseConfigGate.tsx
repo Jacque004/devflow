@@ -21,6 +21,8 @@ export function SupabaseConfigGate({ children }: Props) {
             Les flux d authentification et les modeles d e-mail du dashboard ne peuvent fonctionner que si cette
             application utilise le <strong>meme projet</strong> que celui configure dans Supabase (URL + cle anon dans
             <code className="mx-1 text-sm">web/.env</code>
+            ). Pour un deploiement GitHub Pages, ajoute les memes variables en secrets Actions (
+            <code className="text-sm">VITE_SUPABASE_URL</code>, <code className="text-sm">VITE_SUPABASE_ANON_KEY</code>
             ).
           </p>
           <ul className="list-disc pl-5 space-y-2 text-[0.95rem] text-[var(--text)] mb-6">
