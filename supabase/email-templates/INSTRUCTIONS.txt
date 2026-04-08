@@ -1,0 +1,64 @@
+DevFlow — modèles d’e-mail Supabase Auth
+========================================
+
+A quoi servent ces fichiers (important)
+---------------------------------------
+- Projet SUPABASE HEBERGE (supabase.com) : les e-mails d inscription, reset mot de passe et changement d e-mail sont
+  deja generes par le SERVEUR Auth. Ce que tu configures dans Authentication → Email Templates s applique
+  automatiquement des que l app appelle signUp, resetPasswordForEmail, updateUser({ email }), etc.
+  Aucun code dans React ne « charge » ces modeles : ils sont utilises cote Supabase au moment d envoyer le mail.
+
+- Developpement LOCAL (Supabase CLI : supabase start) : les memes HTML du depot sont maintenant REFERENCES dans
+  supabase/config.toml (sections [auth.email.template.confirmation], .recovery, .email_change). Apres modification
+  des fichiers .html, redemarrer : supabase stop && supabase start. Les mails de test vont dans Inbucket
+  (http://127.0.0.1:54324 par defaut).
+
+- Pour que le depot et le dashboard restent alignes : modifie les fichiers dans email-templates/, puis recopie le HTML
+  dans le dashboard pour la prod, OU utilise l API Management avec un token (voir lien doc en bas).
+
+Où coller le contenu (dashboard heberge uniquement)
+---------------------------------------------------
+Dashboard Supabase : Authentication → Email Templates
+  - « Confirm signup »     → corps : confirm-signup.html      | sujet : confirm-signup-subject.txt
+  - « Change email address » → corps : email-change.html      | sujet : email-change-subject.txt
+  - « Reset password »     → corps : reset-password.html      | sujet : reset-password-subject.txt
+
+Variables utilisées (Go templates, ne pas modifier les {{ … }})
+----------------------------------------------------------------
+{{ .SiteURL }}          URL du site (réglage Auth → URL Configuration)
+{{ .ConfirmationURL }}  Lien de confirmation / réinitialisation / changement d’e-mail
+{{ .Email }}            Adresse e-mail concernée
+{{ .NewEmail }}         Nouvelle adresse (template « changement d’e-mail » uniquement)
+{{ .Token }}            Code OTP à 6 chiffres (optionnel, affiché dans les modèles)
+
+Logo dans les e-mails
+---------------------
+Les modèles pointent vers : {{ .SiteURL }}/favicon.svg
+  - Fichier présent dans le dépôt : web/public/favicon.svg
+  - Après déploiement, l’URL doit être publique (ex. https://votre-domaine.com/favicon.svg).
+
+Pour une meilleure compatibilité avec Outlook et certains webmails, vous pouvez :
+  1. Exporter le logo en PNG (ex. logo-email.png, ~96px de large) dans web/public/
+  2. Remplacer dans les trois fichiers HTML la balise img :
+       src="{{ .SiteURL }}/favicon.svg"
+     par :
+       src="{{ .SiteURL }}/logo-email.png"
+
+API Management (optionnel)
+--------------------------
+Voir la doc : https://supabase.com/docs/guides/auth/auth-email-templates
+Clés JSON : mailer_subjects_confirmation, mailer_templates_confirmation_content,
+            mailer_subjects_email_change, mailer_templates_email_change_content,
+            mailer_subjects_recovery, mailer_templates_recovery_content
+
+Si les « {{ .Variable }} » apparaissent telles quelles dans le mail reçu
+-------------------------------------------------------------------------
+Cela signifie que le moteur de templates Go côté Supabase Auth n’a pas rendu le modèle (le corps a été envoyé comme du texte brut ou le rendu a échoué).
+
+À vérifier :
+  1. Le HTML est bien collé dans le champ « Body » du bon modèle (ex. « Change email address », pas seulement le sujet).
+  2. Après enregistrement, recharger la page du dashboard et confirmer que le contenu est toujours là (voir aussi la doc « email template not updating »).
+  3. Logs du projet : Auth → erreurs du type template / parse sur le corps du mail.
+  4. Tester avec un corps minimal : <p>Bonjour {{ .Email }}</p> puis renvoyer un mail de changement d’adresse.
+
+Deux modèles différents : « Change email address » (lien à cliquer pour confirmer, avec {{ .NewEmail }}) et « Email address changed » (notification après coup, avec {{ .OldEmail }}). Utiliser le premier pour le scénario décrit dans les fichiers email-change.*.

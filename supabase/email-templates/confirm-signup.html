@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmer l’inscription</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f0f0f5;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#f0f0f5;padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background-color:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e8e8ef;">
+          <tr>
+            <td style="padding:36px 32px 8px;text-align:center;">
+              <img src="{{ .SiteURL }}/favicon.svg" width="48" height="46" alt="DevFlow" style="display:block;margin:0 auto;border:0;outline:none;text-decoration:none;">
+              <h1 style="margin:20px 0 8px;font-size:22px;font-weight:600;color:#1a1a2e;line-height:1.3;">Bienvenue sur DevFlow</h1>
+              <p style="margin:0;font-size:15px;color:#5c5c6e;line-height:1.5;">Merci de confirmer ton adresse e-mail pour activer ton compte.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 32px 28px;">
+              <p style="margin:0 0 20px;font-size:15px;color:#3d3d4d;line-height:1.55;">Bonjour,</p>
+              <p style="margin:0 0 24px;font-size:15px;color:#3d3d4d;line-height:1.55;">Clique sur le bouton ci-dessous pour confirmer ton inscription. Ce lien expire après un court délai pour des raisons de sécurité.</p>
+              <table role="presentation" cellspacing="0" cellpadding="0" style="margin:0 auto;">
+                <tr>
+                  <td style="border-radius:8px;background-color:#863bff;">
+                    <a href="{{ .ConfirmationURL }}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;">Confirmer mon inscription</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:24px 0 0;font-size:13px;color:#8a8a9a;line-height:1.5;">Si tu n’as pas créé de compte DevFlow, tu peux ignorer ce message.</p>
+              {{ if .Token }}<p style="margin:16px 0 0;font-size:13px;color:#8a8a9a;line-height:1.5;">Tu peux aussi saisir ce code à 6 chiffres si l’application te le demande : <strong style="color:#1a1a2e;">{{ .Token }}</strong></p>{{ end }}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 32px 28px;">
+              <p style="margin:0;font-size:12px;color:#a0a0b0;line-height:1.5;word-break:break-all;">Si le bouton ne fonctionne pas, copie-colle ce lien dans ton navigateur :<br><a href="{{ .ConfirmationURL }}" style="color:#863bff;">{{ .ConfirmationURL }}</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 32px;border-top:1px solid #eeeef4;background-color:#fafafc;text-align:center;">
+              <p style="margin:0;font-size:12px;color:#9a9aac;">DevFlow — ton espace pour organiser ton travail de développement</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

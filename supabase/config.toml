@@ -1,0 +1,63 @@
+# DevFlow — configuration Supabase CLI (local + lien projet distant)
+# Référence : https://supabase.com/docs/guides/cli/config
+
+project_id = "devflow"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+health_timeout = "2m"
+major_version = 17
+
+[db.migrations]
+enabled = true
+schema_paths = []
+
+[db.seed]
+enabled = false
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:5173"
+additional_redirect_urls = [
+  "https://127.0.0.1:5173",
+  "http://127.0.0.1:5173/reinitialiser-mot-de-passe",
+  "http://localhost:5173/reinitialiser-mot-de-passe",
+  "http://127.0.0.1:5173/profil",
+  "http://localhost:5173/profil",
+]
+
+# Modeles d e-mail Auth (dev local) : fichiers du depot utilises par GoTrue apres supabase stop && supabase start
+# Doc : https://supabase.com/docs/guides/local-development/customizing-email-templates
+[auth.email.template.confirmation]
+subject = "Confirmez votre inscription — DevFlow"
+content_path = "./email-templates/confirm-signup.html"
+
+[auth.email.template.recovery]
+subject = "Réinitialisez votre mot de passe — DevFlow"
+content_path = "./email-templates/reset-password.html"
+
+[auth.email.template.email_change]
+subject = "Confirmez votre nouvelle adresse e-mail — DevFlow"
+content_path = "./email-templates/email-change.html"
+
+[analytics]
+enabled = false

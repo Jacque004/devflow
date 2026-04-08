@@ -1,0 +1,4 @@
+debug.log
+
+# Supabase CLI cache (local)
+supabase/.temp/
