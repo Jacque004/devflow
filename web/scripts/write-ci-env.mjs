@@ -1,24 +1,59 @@
 /**
  * Appelé uniquement par GitHub Actions avant `vite build`.
- * Écrit web/.env.production pour que Vite charge les VITE_* de façon fiable (évite les soucis d env héritée du shell).
+ * Écrit web/.env.production pour que Vite charge les VITE_* de façon fiable.
+ *
+ * Ordre de priorité : variables d’environnement (secrets / vars GitHub), puis web/ci/pages.env.
  */
-import { writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 
-const url = (process.env.VITE_SUPABASE_URL ?? '').trim()
-const key = (process.env.VITE_SUPABASE_ANON_KEY ?? '').trim()
-const ref = (process.env.VITE_SUPABASE_EXPECTED_REF ?? '').trim()
+function parseDotenv(content) {
+  const out = {}
+  for (const line of content.split(/\r?\n/)) {
+    const t = line.trim()
+    if (!t || t.startsWith('#')) continue
+    const i = t.indexOf('=')
+    if (i === -1) continue
+    const k = t.slice(0, i).trim()
+    let v = t.slice(i + 1).trim()
+    if (
+      (v.startsWith('"') && v.endsWith('"')) ||
+      (v.startsWith("'") && v.endsWith("'"))
+    ) {
+      v = v.slice(1, -1)
+    }
+    out[k] = v
+  }
+  return out
+}
+
+function loadPagesEnvFile() {
+  const path = join(root, 'ci', 'pages.env')
+  try {
+    return parseDotenv(readFileSync(path, 'utf8'))
+  } catch {
+    return null
+  }
+}
+
+let url = (process.env.VITE_SUPABASE_URL ?? '').trim()
+let key = (process.env.VITE_SUPABASE_ANON_KEY ?? '').trim()
+let ref = (process.env.VITE_SUPABASE_EXPECTED_REF ?? '').trim()
+
+const fileEnv = loadPagesEnvFile()
+if (fileEnv) {
+  if (!url) url = (fileEnv.VITE_SUPABASE_URL ?? '').trim()
+  if (!key) key = (fileEnv.VITE_SUPABASE_ANON_KEY ?? '').trim()
+  if (!ref) ref = (fileEnv.VITE_SUPABASE_EXPECTED_REF ?? '').trim()
+}
 
 if (!url || !key) {
   console.error(
-    '::error::Aucune valeur pour VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY. ' +
-      'Ajoute-les soit comme secrets du dépôt (Settings → Secrets and variables → Actions → Repository secrets), ' +
-      'soit comme secrets de l’environnement « github-pages » (Settings → Environments → github-pages). ' +
-      'Noms exacts : VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY (Supabase → Project Settings → API). ' +
-      'Tu peux aussi utiliser des Variables de dépôt avec les mêmes noms. Puis relance le workflow.',
+    '::error::VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY manquants. ' +
+      'Définis les secrets / variables GitHub (VITE_*), ou remplis et commit web/ci/pages.env (voir pages.env.example).',
   )
   process.exit(1)
 }
